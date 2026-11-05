@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Di Sini ada Pesta</title>
+<title>Di sini ada Pesta</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
@@ -131,7 +131,7 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:9;width:100%;height:10
   <h1 class="gtitle">Shh... It’s a Birthday Surprise!<small>There’s a secret invitation waiting behind that door. Dare to open it?</small></h1>
   <img class="host l" data-img="mickey" alt="Mickey Mouse membawa kado">
   <img class="host r" data-img="minnie" alt="Minnie Mouse melambai">
-  <div class="hint" id="hint">Open The Door</div>
+  <div class="hint" id="hint">Ketuk pintu kastil</div>
   <div class="flash"></div>
 </div>
 
@@ -214,19 +214,28 @@ const TUNE=[['G4',.75],['G4',.25],['A4',1],['G4',1],['C5',1],['B4',2],
 ['G4',.75],['G4',.25],['A4',1],['G4',1],['D5',1],['C5',2],
 ['G4',.75],['G4',.25],['G5',1],['E5',1],['C5',1],['B4',1],['A4',1],
 ['F5',.75],['F5',.25],['E5',1],['C5',1],['D5',1],['C5',3]];
-function getAudio(){
-  if(!ASSETS.music)return null;
-  if(!SND.audio){SND.audio=new Audio(ASSETS.music);SND.audio.loop=!!ASSETS.musicLoop;SND.audio.preload='auto'}
-  return SND.audio;
+/* --- MP3: setiap mulai ulang membuat elemen audio BARU (tanpa seek), jadi tetap jalan
+       walau server file tidak mendukung seek (mis. link Google Drive) --- */
+function startMp3(){
+  stopMp3();
+  const a=new Audio(ASSETS.music);
+  a.preload='auto';a.loop=!!ASSETS.musicLoop;
+  a.onended=()=>{                      /* cadangan jika loop bawaan browser gagal */
+    if(SND.audio===a&&SND.on&&ASSETS.musicLoop)startMp3();
+  };
+  SND.audio=a;
+  const pr=a.play();if(pr&&pr.catch)pr.catch(()=>{});
+}
+function stopMp3(){
+  const a=SND.audio;if(!a)return;
+  SND.audio=null;a.onended=null;a.pause();a.removeAttribute('src');a.load();
 }
 function unlockAudio(){
   try{if(!SND.ac)SND.ac=new (window.AudioContext||window.webkitAudioContext)();
   if(SND.ac.state==='suspended')SND.ac.resume()}catch(e){}
-  const a=getAudio();
-  if(a&&!SND.unlocked){SND.unlocked=true;a.muted=true;a.play().then(()=>{a.pause();a.currentTime=0;a.muted=false}).catch(()=>{a.muted=false})}
 }
 function stopSound(){
-  if(SND.audio){SND.audio.pause();SND.audio.currentTime=0}
+  stopMp3();
   if(!SND.master||!SND.ac)return;
   const m=SND.master,t=SND.ac.currentTime;
   m.gain.cancelScheduledValues(t);m.gain.setTargetAtTime(0,t,.05);
@@ -234,8 +243,7 @@ function stopSound(){
 }
 function playBirthday(){
   if(!SND.on)return;unlockAudio();
-  const mp3=getAudio();
-  if(mp3){stopSound();mp3.currentTime=0;mp3.play().catch(()=>{});return}
+  if(ASSETS.music){startMp3();return}
   if(!SND.ac)return;
   stopSound();
   const ac=SND.ac,m=ac.createGain();m.gain.value=.5;m.connect(ac.destination);SND.master=m;
@@ -262,7 +270,7 @@ let opened=false;
 function openDoor(){
   if(opened)return;opened=true;unlockAudio();
   $('#gate').classList.add('zoom');
-  setTimeout(playBirthday,1900);
+  if(ASSETS.music)playBirthday();else setTimeout(playBirthday,1900);
   setTimeout(()=>{$('#hall').classList.add('on');$('#gate').style.opacity=0;$('#gate').style.pointerEvents='none'},1900);
   setTimeout(()=>{$('#gate').remove();confetti(70)},3000);
 }
