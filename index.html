@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Di sini ada Pesta</title>
+<title>Odrey B'day</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
@@ -49,16 +49,26 @@ h2 em{font-style:normal;color:var(--gold)}
 p.sub{max-width:34ch;font-size:1.05rem}
 .hero-row{display:flex;align-items:flex-end;justify-content:center;gap:.5rem}
 .hero-row .mk{height:min(30dvh,44vw);animation:bob 2.6s ease-in-out infinite}
-.arch{position:relative;flex:none;width:min(40vw,190px);aspect-ratio:3/4;padding:11px;margin-top:16px;border-radius:999px 999px 16px 16px;background:linear-gradient(135deg,#fff1a8 0%,#d9a52e 22%,#7a4d0e 45%,#f4d77a 62%,#b27a1b 82%,#fff1a8 100%);box-shadow:0 22px 34px #000b,0 0 0 2px #4b2f06,inset 0 0 10px 3px #5b3a07;cursor:pointer;scroll-snap-align:center;color:var(--cream);font-weight:800;font-size:.9rem}
+.arch{position:relative;flex:none;width:min(20vw,190px);aspect-ratio:3/4;padding:11px;margin-top:16px;border-radius:999px 999px 16px 16px;background:linear-gradient(135deg,#fff1a8 0%,#d9a52e 22%,#7a4d0e 45%,#f4d77a 62%,#b27a1b 82%,#fff1a8 100%);box-shadow:0 22px 34px #000b,0 0 0 2px #4b2f06,inset 0 0 10px 3px #5b3a07;cursor:pointer;scroll-snap-align:center;color:var(--cream);font-weight:800;font-size:.9rem}
 .arch::before{content:"";position:absolute;left:50%;top:-16px;width:26px;height:26px;translate:-50% 0;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff6c0,#d9a52e 45%,#6b430a);box-shadow:0 3px 5px #0009;z-index:1}
 .arch::after{content:"";position:absolute;inset:6px;border-radius:inherit;border:2px solid #fff6c066;box-shadow:inset 0 0 0 2px #7a4d0e88;pointer-events:none;z-index:2}
 .mat{position:relative;width:100%;height:100%;display:grid;place-items:center;border-radius:999px 999px 8px 8px;background:linear-gradient(160deg,#4b2d8f,#7b4fc9);background-size:cover;background-position:center;overflow:hidden;box-shadow:inset 0 0 22px 8px #000c,inset 0 0 0 3px #3a2205}
 .mat::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,#fff0 30%,#ffffff38 42%,#fff0 55%);pointer-events:none}
 .arch input{position:absolute;inset:0;opacity:0;cursor:pointer}
 .arch.has span{display:none}
-.arch.big{width:min(56vw,250px)}
-.strip{display:flex;gap:1rem;overflow-x:auto;max-width:100%;padding:.6rem 1rem 1rem;scroll-snap-type:x mandatory}
+.arch.big{width:min(27vw,250px)}
+.strip{display:flex;justify-content:center;align-items:flex-end;gap:.8rem;max-width:100%;padding:.6rem .5rem 1rem}
 .tilt1{rotate:-3deg}.tilt2{rotate:2deg;translate:0 12px}.tilt3{rotate:-1deg}
+@media (max-width:640px){
+  /* HP: foto utama besar di atas, 3 foto lain berjejer di bawahnya, tanpa geser samping */
+  .strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem .6rem;width:min(94vw,420px);padding:.4rem .2rem 1rem;align-items:start}
+  .arch,.arch.big{width:100%;padding:7px;margin-top:12px;font-size:.72rem;border-radius:999px 999px 10px 10px}
+  .arch.big{grid-column:1/-1;order:-1;width:min(62vw,250px);justify-self:center;padding:10px;font-size:.85rem}
+  .arch::before{width:18px;height:18px;top:-11px}
+  .arch.big::before{width:24px;height:24px;top:-15px}
+  .arch::after{inset:4px}
+  .tilt2{translate:0 6px}
+}
 /* KUE */
 .cakewrap{width:min(78vw,340px);position:relative}
 .flame{transform-origin:center bottom;animation:flick .35s ease-in-out infinite alternate;transition:opacity .3s,transform .3s}
@@ -150,7 +160,7 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:9;width:100%;height:10
       <label class="arch tilt2"><div class="mat"><span>+ Photo 3</span></div><input type="file" accept="image/*"></label>
       <label class="arch tilt3"><div class="mat"><span>+ Photo 4</span></div><input type="file" accept="image/*"></label>
     </div>
-    <p class="sub">Swipe through the memories, then scroll down to the cake.</p>
+    <p class="sub">Look back at the memories, then scroll down to the cake.</p>
   </section>
 
   <section id="s2">
@@ -208,7 +218,7 @@ function setName(n){document.querySelectorAll('.nm').forEach(e=>e.textContent=n)
 setName(CFG.name);
 
 /* ===== Suara ulang tahun (Web Audio, tanpa file) ===== */
-const SND={ac:null,on:true,master:null};
+const SND={ac:null,on:true,master:null,vol:1};
 const N={G4:392,A4:440,B4:493.88,C5:523.25,D5:587.33,E5:659.25,F5:698.46,G5:783.99};
 const TUNE=[['G4',.75],['G4',.25],['A4',1],['G4',1],['C5',1],['B4',2],
 ['G4',.75],['G4',.25],['A4',1],['G4',1],['D5',1],['C5',2],
@@ -218,7 +228,7 @@ const TUNE=[['G4',.75],['G4',.25],['A4',1],['G4',1],['C5',1],['B4',2],
 function ensureMp3(){
   let a=SND.audio;
   if(!a){
-    a=new Audio(ASSETS.music);a.preload='auto';a.loop=!!ASSETS.musicLoop;
+    a=new Audio(ASSETS.music);a.preload='auto';a.loop=!!ASSETS.musicLoop;a.volume=SND.vol;
     a.onended=()=>{                    /* cadangan jika loop bawaan browser gagal */
       if(SND.audio===a&&SND.on&&ASSETS.musicLoop){SND.audio=null;ensureMp3()}
     };
@@ -229,6 +239,12 @@ function ensureMp3(){
 function unlockAudio(){
   try{if(!SND.ac)SND.ac=new (window.AudioContext||window.webkitAudioContext)();
   if(SND.ac.state==='suspended')SND.ac.resume()}catch(e){}
+}
+/* turunkan volume lagu sementara (mis. saat kembang api) agar efek suara terdengar jelas */
+function duck(v){
+  SND.vol=v;
+  if(SND.audio)SND.audio.volume=v;
+  if(SND.master&&SND.ac)SND.master.gain.setTargetAtTime(.5*v,SND.ac.currentTime,.2);
 }
 function pauseSound(){
   if(SND.audio)SND.audio.pause();
@@ -241,7 +257,7 @@ function playBirthday(){
   const ac=SND.ac;if(!ac)return;
   if(SND.master&&ac.currentTime<SND.synthEnd)return;     /* melodi masih berjalan */
   if(SND.master){try{SND.master.disconnect()}catch(e){}}
-  const m=ac.createGain();m.gain.value=.5;m.connect(ac.destination);SND.master=m;
+  const m=ac.createGain();m.gain.value=.5*SND.vol;m.connect(ac.destination);SND.master=m;
   let t=ac.currentTime+.1;const beat=.5;
   TUNE.forEach(([n,d])=>{
     const dur=d*beat,f=N[n];
@@ -358,11 +374,27 @@ const fwc=$('#fw'),fx=fwc.getContext('2d');let F=[],fwRun=false;
 function fwFit(){fwc.width=innerWidth;fwc.height=innerHeight}fwFit();addEventListener('resize',fwFit);
 function pop(){
   if(!SND.on||!SND.ac)return;
-  const ac=SND.ac,len=ac.sampleRate*.3|0,buf=ac.createBuffer(1,len,ac.sampleRate),d=buf.getChannelData(0);
-  for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,3);
-  const src=ac.createBufferSource(),lp=ac.createBiquadFilter(),g=ac.createGain();
-  src.buffer=buf;lp.type='lowpass';lp.frequency.value=900;g.gain.value=.35;
-  src.connect(lp);lp.connect(g);g.connect(ac.destination);src.start();
+  const ac=SND.ac,t=ac.currentTime;
+  if(!SND.fx){                                   /* kompresor + penguat: keras tapi tidak pecah */
+    const c=ac.createDynamicsCompressor();c.threshold.value=-14;c.ratio.value=10;c.attack.value=.002;c.release.value=.2;
+    const out=ac.createGain();out.gain.value=2.2;c.connect(out);out.connect(ac.destination);SND.fx=c;
+  }
+  const nz=(dur,pw)=>{const len=ac.sampleRate*dur|0,b=ac.createBuffer(1,len,ac.sampleRate),d=b.getChannelData(0);
+    for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,pw);return b};
+  /* 1) ledakan utama: noise + dentuman rendah */
+  const bang=ac.createBufferSource(),lp=ac.createBiquadFilter(),g1=ac.createGain();
+  bang.buffer=nz(.7,2);lp.type='lowpass';lp.frequency.setValueAtTime(2600,t);lp.frequency.exponentialRampToValueAtTime(300,t+.5);
+  g1.gain.value=1.1;bang.connect(lp);lp.connect(g1);g1.connect(SND.fx);bang.start(t);
+  const o=ac.createOscillator(),g2=ac.createGain();
+  o.type='sine';o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(38,t+.4);
+  g2.gain.setValueAtTime(1.3,t);g2.gain.exponentialRampToValueAtTime(.001,t+.55);
+  o.connect(g2);g2.connect(SND.fx);o.start(t);o.stop(t+.6);
+  /* 2) percikan kecil setelah ledakan */
+  for(let i=0;i<7;i++){
+    const s2=ac.createBufferSource(),hp=ac.createBiquadFilter(),g3=ac.createGain(),at=t+.12+Math.random()*.55;
+    s2.buffer=nz(.06,2);hp.type='highpass';hp.frequency.value=2500+Math.random()*2500;
+    g3.gain.value=.35+Math.random()*.3;s2.connect(hp);hp.connect(g3);g3.connect(SND.fx);s2.start(at);
+  }
 }
 function burst(x,y){
   const hue=Math.random()*360,n=50+(Math.random()*26|0);
@@ -387,10 +419,10 @@ function fwTick(){
 let fwTimer=null;
 function fireworks(){
   if(matchMedia('(prefers-reduced-motion:reduce)').matches||fwTimer)return;
-  let n=0;
+  let n=0;clearTimeout(SND.dt);duck(.3);
   fwTimer=setInterval(()=>{
     burst(innerWidth*(.12+Math.random()*.76),innerHeight*(.12+Math.random()*.38));
-    if(++n>=14){clearInterval(fwTimer);fwTimer=null}
+    if(++n>=14){clearInterval(fwTimer);fwTimer=null;SND.dt=setTimeout(()=>duck(1),2500)}
   },380);
   if(!fwRun){fwRun=true;fwTick()}
 }
