@@ -150,7 +150,7 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:9;width:100%;height:10
       <label class="arch tilt2"><div class="mat"><span>+ Photo 3</span></div><input type="file" accept="image/*"></label>
       <label class="arch tilt3"><div class="mat"><span>+ Photo 4</span></div><input type="file" accept="image/*"></label>
     </div>
-    <p class="sub">Swipe to make a wish</p>
+    <p class="sub">Swipe through the memories, then scroll down to the cake.</p>
   </section>
 
   <section id="s2">
@@ -214,39 +214,34 @@ const TUNE=[['G4',.75],['G4',.25],['A4',1],['G4',1],['C5',1],['B4',2],
 ['G4',.75],['G4',.25],['A4',1],['G4',1],['D5',1],['C5',2],
 ['G4',.75],['G4',.25],['G5',1],['E5',1],['C5',1],['B4',1],['A4',1],
 ['F5',.75],['F5',.25],['E5',1],['C5',1],['D5',1],['C5',3]];
-/* --- MP3: setiap mulai ulang membuat elemen audio BARU (tanpa seek), jadi tetap jalan
-       walau server file tidak mendukung seek (mis. link Google Drive) --- */
-function startMp3(){
-  stopMp3();
-  const a=new Audio(ASSETS.music);
-  a.preload='auto';a.loop=!!ASSETS.musicLoop;
-  a.onended=()=>{                      /* cadangan jika loop bawaan browser gagal */
-    if(SND.audio===a&&SND.on&&ASSETS.musicLoop)startMp3();
-  };
-  SND.audio=a;
-  const pr=a.play();if(pr&&pr.catch)pr.catch(()=>{});
-}
-function stopMp3(){
-  const a=SND.audio;if(!a)return;
-  SND.audio=null;a.onended=null;a.pause();a.removeAttribute('src');a.load();
+/* --- MP3: satu elemen audio. Sound off = pause, Sound on = lanjut dari posisi terakhir (tidak mulai dari awal) --- */
+function ensureMp3(){
+  let a=SND.audio;
+  if(!a){
+    a=new Audio(ASSETS.music);a.preload='auto';a.loop=!!ASSETS.musicLoop;
+    a.onended=()=>{                    /* cadangan jika loop bawaan browser gagal */
+      if(SND.audio===a&&SND.on&&ASSETS.musicLoop){SND.audio=null;ensureMp3()}
+    };
+    SND.audio=a;
+  }
+  if(a.paused){const pr=a.play();if(pr&&pr.catch)pr.catch(()=>{})}
 }
 function unlockAudio(){
   try{if(!SND.ac)SND.ac=new (window.AudioContext||window.webkitAudioContext)();
   if(SND.ac.state==='suspended')SND.ac.resume()}catch(e){}
 }
-function stopSound(){
-  stopMp3();
-  if(!SND.master||!SND.ac)return;
-  const m=SND.master,t=SND.ac.currentTime;
-  m.gain.cancelScheduledValues(t);m.gain.setTargetAtTime(0,t,.05);
-  setTimeout(()=>{try{m.disconnect()}catch(e){}},400);SND.master=null;
+function pauseSound(){
+  if(SND.audio)SND.audio.pause();
+  try{if(SND.ac&&SND.ac.state==='running')SND.ac.suspend()}catch(e){}   /* melodi bawaan ikut berhenti di posisinya */
 }
+/* Memastikan musik berbunyi. Jika sudah berbunyi, TIDAK diulang dari awal. */
 function playBirthday(){
   if(!SND.on)return;unlockAudio();
-  if(ASSETS.music){startMp3();return}
-  if(!SND.ac)return;
-  stopSound();
-  const ac=SND.ac,m=ac.createGain();m.gain.value=.5;m.connect(ac.destination);SND.master=m;
+  if(ASSETS.music){ensureMp3();return}
+  const ac=SND.ac;if(!ac)return;
+  if(SND.master&&ac.currentTime<SND.synthEnd)return;     /* melodi masih berjalan */
+  if(SND.master){try{SND.master.disconnect()}catch(e){}}
+  const m=ac.createGain();m.gain.value=.5;m.connect(ac.destination);SND.master=m;
   let t=ac.currentTime+.1;const beat=.5;
   TUNE.forEach(([n,d])=>{
     const dur=d*beat,f=N[n];
@@ -259,10 +254,11 @@ function playBirthday(){
     });
     t+=dur;
   });
+  SND.synthEnd=t;
 }
 $('#sndBtn').onclick=()=>{
   SND.on=!SND.on;$('#sndBtn').textContent=SND.on?'Sound: on':'Sound: off';
-  if(SND.on)playBirthday();else stopSound();
+  if(SND.on)playBirthday();else pauseSound();
 };
 
 /* ===== Buka pintu ===== */
