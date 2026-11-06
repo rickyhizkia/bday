@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Odrey B'day</title>
+<title>Happy bday Odrey</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
@@ -57,17 +57,22 @@ p.sub{max-width:34ch;font-size:1.05rem}
 .arch input{position:absolute;inset:0;opacity:0;cursor:pointer}
 .arch.has span{display:none}
 .arch.big{width:min(27vw,250px)}
-.strip{display:flex;justify-content:center;align-items:flex-end;gap:.8rem;max-width:100%;padding:.6rem .5rem 1rem}
+.strip{display:grid;grid-template-columns:repeat(5,1fr);gap:1.4rem .8rem;align-items:start;width:min(96vw,840px);padding:.6rem .5rem 1rem}
+.strip .arch{width:100%}
+.strip .arch.big{grid-column:1/-1;order:-1;width:min(34vw,260px);justify-self:center}
 .tilt1{rotate:-3deg}.tilt2{rotate:2deg;translate:0 12px}.tilt3{rotate:-1deg}
 @media (max-width:640px){
-  /* HP: foto utama besar di atas, 3 foto lain berjejer di bawahnya, tanpa geser samping */
-  .strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem .6rem;width:min(94vw,420px);padding:.4rem .2rem 1rem;align-items:start}
-  .arch,.arch.big{width:100%;padding:7px;margin-top:12px;font-size:.72rem;border-radius:999px 999px 10px 10px}
-  .arch.big{grid-column:1/-1;order:-1;width:min(62vw,250px);justify-self:center;padding:10px;font-size:.85rem}
+  /* HP: foto utama besar di atas, lalu 5 foto kecil: 3 di baris pertama, 2 di tengah baris kedua */
+  .strip{grid-template-columns:repeat(6,1fr);gap:1.1rem .6rem;width:min(94vw,420px);padding:.4rem .2rem 1rem}
+  .strip .arch{grid-column:span 2;padding:7px;margin-top:12px;font-size:.72rem;border-radius:999px 999px 10px 10px}
+  .strip .arch.big{grid-column:1/-1;width:min(62vw,250px);padding:10px;font-size:.85rem}
+  .strip .arch:nth-child(5){grid-column:2/span 2}
+  .strip .arch:nth-child(6){grid-column:4/span 2}
   .arch::before{width:18px;height:18px;top:-11px}
   .arch.big::before{width:24px;height:24px;top:-15px}
   .arch::after{inset:4px}
   .tilt2{translate:0 6px}
+}
 }
 /* KUE */
 .cakewrap{width:min(78vw,340px);position:relative}
@@ -141,7 +146,7 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:9;width:100%;height:10
   <h1 class="gtitle">Shh... It’s a Birthday Surprise!<small>There’s a secret invitation waiting behind that door. Dare to open it?</small></h1>
   <img class="host l" data-img="mickey" alt="Mickey Mouse membawa kado">
   <img class="host r" data-img="minnie" alt="Minnie Mouse melambai">
-  <div class="hint" id="hint">Open The Door</div>
+  <div class="hint" id="hint">Open the door</div>
   <div class="flash"></div>
 </div>
 
@@ -159,8 +164,10 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:9;width:100%;height:10
       <label class="arch big"><div class="mat"><span>+ Main photo</span></div><input type="file" accept="image/*"></label>
       <label class="arch tilt2"><div class="mat"><span>+ Photo 3</span></div><input type="file" accept="image/*"></label>
       <label class="arch tilt3"><div class="mat"><span>+ Photo 4</span></div><input type="file" accept="image/*"></label>
+      <label class="arch tilt1"><div class="mat"><span>+ Photo 5</span></div><input type="file" accept="image/*"></label>
+      <label class="arch tilt2"><div class="mat"><span>+ Photo 6</span></div><input type="file" accept="image/*"></label>
     </div>
-    <p class="sub">Look back at the memories, then scroll down to the cake.</p>
+    <p class="sub">Scroll to make a wish</p>
   </section>
 
   <section id="s2">
@@ -196,7 +203,7 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:9;width:100%;height:10
         <h3 id="mTitle">For <span class="nm">Audrey</span></h3>
         <p id="msg">Happy birthday Beb!
 May health, blessings, and happiness always be with u in everything u do this year.
-With this new year of life, I pray u grow even more patient and leave all the negative thoughts behind. 
+With this new year of life, I pray u grow even more patient and leave all the negative thoughts behind.
 Trust ur life in God’s hands, and everything u do will surely prosper. 🥳🎉</p>
         <div class="sig">Ricky Stark</div>
       </div>
@@ -446,13 +453,13 @@ function tick(){
 /* =====================================================================
    PENGATURAN ASET (ubah di sini)
    - music : URL file mp3 (kosongkan '' untuk memakai melodi bawaan)
-   - photos: URL 4 foto di bingkai halaman kedua, urutan: Photo 1, Main photo, Photo 3, Photo 4
+   - photos: URL 6 foto di bingkai halaman kedua, urutan: Photo 1, Main photo, Photo 3, Photo 4, Photo 5, Photo 6
    - images: URL gambar per nama (kosongkan '' untuk memakai gambar bawaan)
    ===================================================================== */
 const ASSETS={
   music:'happy.mp3',
   musicLoop:true,   // true = mp3 diulang terus saat lagunya habis
-  photos:['photo1.jpg','photo3.jpg','photo2.jpg','photo4.jpg'],   // [Photo 1, Main photo, Photo 3, Photo 4]
+  photos:['photo1.jpg','photo3.jpg','photo2.jpg','photo4.jpg','photo5.jpg','photo6.jpg'],   // [Photo 1, Main photo, Photo 3, Photo 4, Photo 5, Photo 6]
   images:{
     hall:'',      // latar aula
     castle:'',    // gerbang kastil (halaman 1)
